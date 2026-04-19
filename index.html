@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>人生私藏名單 - 三維度精簡版</title>
+    <title>全方位私藏名單</title>
     <style>
         :root {
             --primary: #5d6d7e; --accent: #aed6f1; --bg: #fdfefe; --white: #ffffff;
-            /* 馬卡龍色系 - 重新分配給新標籤 */
-            --maca-blue: #D6EAF8; --maca-green: #D5F5E3; --maca-orange: #FDEBD0;
-            --maca-purple: #EBDEF0; --maca-pink: #FADBD8; --maca-yellow: #FCF3CF; --maca-mint: #D1F2EB;
+            /* 重新定義 8 大類別配色 - 馬卡龍色系 */
+            --color-家庭: #D6EAF8; /* 藍 */
+            --color-個人: #D5F5E3; /* 綠 */
+            --color-職場: #FDEBD0; /* 橘 */
+            --color-學習: #EBDEF0; /* 紫 */
+            --color-花費: #FADBD8; /* 紅 */
+            --color-股票: #FCF3CF; /* 黃 */
+            --color-親子: #D1F2EB; /* 薄荷 */
+            --color-保險: #E5E7E9; /* 灰 */
         }
         body { font-family: -apple-system, "Noto Sans TC", sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 85px; }
         .app-header { background: var(--white); padding: 15px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
@@ -17,47 +23,45 @@
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
 
-        /* 卡片與表單 */
         .card { background: var(--white); padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 12px; border: 1px solid #f0f0f0; }
         .form-group { margin-bottom: 18px; display: flex; flex-direction: column; }
         label { font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #7f8c8d; }
-        input, select, textarea { padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
+        input, select { padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
         
         .picker-container { display: flex; flex-wrap: wrap; gap: 8px; }
         .picker-item { 
             padding: 10px 12px; border-radius: 12px; font-size: 13px; cursor: pointer; 
             border: 2px solid transparent; transition: 0.2s; color: #555; font-weight: 500; text-align: center;
-            background: #f5f5f5; flex-grow: 1; min-width: 60px;
+            background: #f5f5f5; flex-grow: 1; min-width: 75px;
         }
         .picker-item.selected { border-color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: white !important; }
 
-        /* 標籤配色 */
-        .tag-成長 { background-color: var(--maca-blue); }
-        .tag-健康 { background-color: var(--maca-green); }
-        .tag-財務 { background-color: var(--maca-yellow); }
-        .tag-娛樂 { background-color: var(--maca-orange); }
-        .tag-專案 { background-color: var(--maca-purple); }
-        .tag-技能 { background-color: var(--maca-mint); }
-        .tag-社交 { background-color: var(--maca-pink); }
-        .tag-其他 { background-color: #f0f3f4; }
+        /* 動態類別背景 */
+        .tag-家庭 { background-color: var(--color-家庭); }
+        .tag-個人 { background-color: var(--color-個人); }
+        .tag-職場 { background-color: var(--color-職場); }
+        .tag-學習 { background-color: var(--color-學習); }
+        .tag-花費 { background-color: var(--color-花費); }
+        .tag-股票 { background-color: var(--color-股票); }
+        .tag-親子 { background-color: var(--color-親子); }
+        .tag-保險 { background-color: var(--color-保險); }
 
         .main-btn { width: 100%; padding: 14px; background: var(--accent); color: #444; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
 
-        /* 分類網格 */
-        .area-title { font-size: 13px; font-weight: bold; color: var(--primary); margin: 20px 0 10px; padding-left: 8px; border-left: 4px solid var(--accent); }
-        .dimension-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 12px; }
-        .dimension-box { background: var(--white); padding: 25px 15px; border-radius: 16px; text-align: center; border: 1px solid #f0f0f0; position: relative; font-size: 18px; font-weight: bold; color: #555; }
-        .dimension-box .count { position: absolute; top: 12px; right: 12px; background: var(--accent); color: #444; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+        /* 網格清單 */
+        .grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .category-box { background: var(--white); padding: 20px 10px; border-radius: 12px; text-align: center; border: 1px solid #f0f0f0; position: relative; font-size: 15px; font-weight: bold; }
+        .category-box .count { position: absolute; top: -5px; right: -5px; background: #ff7675; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; }
 
-        /* 列表卡片 */
+        /* 卡片樣式 */
         .item-card { padding: 18px; border-radius: 16px; margin-bottom: 15px; background: white; border: 1px solid #f0f0f0; position: relative; }
-        .item-title { font-size: 17px; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+        .item-title { font-size: 17px; font-weight: bold; color: var(--primary); }
         .display-cats { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
         .mini-tag { padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        .sub-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .sub-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; }
 
-        /* 導覽列 */
+        /* 導覽 */
         .navbar { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--white); display: flex; border-top: 1px solid #f0f0f0; z-index: 3000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #bdc3c7; cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
@@ -68,29 +72,23 @@
 </head>
 <body>
 
-    <div class="app-header"><h2 id="headerTitle">新增紀錄</h2></div>
+    <div class="app-header"><h2 id="headerTitle">新增資料</h2></div>
 
     <div id="pageAdd" class="page active">
         <div class="card">
             <input type="hidden" id="editId" value="">
-            <div class="form-group"><label>項目名稱</label><input type="text" id="p_name" placeholder="想做的事或目標..."></div>
-            <div class="form-group"><label>所屬維度</label>
-                <select id="p_dimension">
-                    <option value="個人">🧘 個人 (Self)</option>
-                    <option value="家庭">🏠 家庭 (Family)</option>
-                    <option value="職場">💼 職場 (Career)</option>
-                </select>
-            </div>
+            <div class="form-group"><label>項目名稱</label><input type="text" id="p_name" placeholder="內容描述..."></div>
             <div class="form-group">
-                <label>類別標籤</label>
+                <label>選擇標籤 (可複選)</label>
                 <div class="picker-container" id="catPicker">
-                    <div class="picker-item tag-成長" onclick="toggleTag(this, '成長')">成長</div>
-                    <div class="picker-item tag-健康" onclick="toggleTag(this, '健康')">健康</div>
-                    <div class="picker-item tag-財務" onclick="toggleTag(this, '財務')">財務</div>
-                    <div class="picker-item tag-專案" onclick="toggleTag(this, '專案')">專案</div>
-                    <div class="picker-item tag-技能" onclick="toggleTag(this, '技能')">技能</div>
-                    <div class="picker-item tag-社交" onclick="toggleTag(this, '社交')">社交</div>
-                    <div class="picker-item tag-娛樂" onclick="toggleTag(this, '娛樂')">娛樂</div>
+                    <div class="picker-item tag-家庭" onclick="toggleTag(this, '家庭')">家庭</div>
+                    <div class="picker-item tag-個人" onclick="toggleTag(this, '個人')">個人</div>
+                    <div class="picker-item tag-職場" onclick="toggleTag(this, '職場')">職場</div>
+                    <div class="picker-item tag-學習" onclick="toggleTag(this, '學習')">學習</div>
+                    <div class="picker-item tag-花費" onclick="toggleTag(this, '花費')">花費</div>
+                    <div class="picker-item tag-股票" onclick="toggleTag(this, '股票')">股票</div>
+                    <div class="picker-item tag-親子" onclick="toggleTag(this, '親子')">親子</div>
+                    <div class="picker-item tag-保險" onclick="toggleTag(this, '保險')">保險</div>
                 </div>
             </div>
             <div class="form-group">
@@ -104,32 +102,25 @@
             </div>
             <div style="margin: 10px 0 25px; display: flex; align-items: center; gap: 10px;">
                 <input type="checkbox" id="p_done" style="width:24px; height:24px;">
-                <label for="p_done" style="margin:0; font-size:16px; color:#555;">已達成 / 已完成 🏆</label>
+                <label for="p_done" style="margin:0; font-size:16px; color:#555;">完成 / 結案 🚩</label>
             </div>
-            <button class="main-btn" id="saveBtn" onclick="saveItem()">儲存紀錄</button>
+            <button class="main-btn" id="saveBtn" onclick="saveItem()">儲存資料</button>
             <button class="main-btn" id="cancelBtn" onclick="resetForm()" style="background:#bdc3c7; margin-top:10px; display:none;">取消編輯</button>
         </div>
     </div>
 
     <div id="pageList" class="page">
-        <div class="area-title">生活維度</div>
-        <div class="dimension-grid" id="dimensionMenu">
-            </div>
+        <div class="grid-layout" id="catMenu"></div>
     </div>
 
     <div id="pageFilter" class="page">
         <div class="card" style="padding: 12px; margin-bottom: 10px;">
-            <label>1. 執行狀態</label>
+            <label>狀態篩選</label>
             <div class="picker-container" id="filterStatusPicker">
                 <div class="picker-item selected" onclick="toggleFilterStatus(this, 'all')">全部</div>
-                <div class="picker-item" onclick="toggleFilterStatus(this, 'todo')">進行中 ⏳</div>
-                <div class="picker-item" onclick="toggleFilterStatus(this, 'done')">已達成 🏆</div>
+                <div class="picker-item" onclick="toggleFilterStatus(this, 'todo')">未完成</div>
+                <div class="picker-item" onclick="toggleFilterStatus(this, 'done')">已完成</div>
             </div>
-        </div>
-        <div class="card" style="padding: 12px; margin-bottom: 10px;">
-            <label>2. 篩選類別 (可複選)</label>
-            <div class="picker-container" id="filterCatPicker">
-                </div>
         </div>
         <div id="filterResultContainer"></div>
     </div>
@@ -141,109 +132,98 @@
     </div>
 
     <div class="navbar">
-        <div class="nav-item active" onclick="switchPage('add')" id="navAdd"><span class="nav-icon">✍️</span><span>記錄</span></div>
-        <div class="nav-item" onclick="switchPage('list')" id="navDimension"><span class="nav-icon">🌈</span><span>維度</span></div>
-        <div class="nav-item" onclick="switchPage('filter')" id="navFilter"><span class="nav-icon">🔍</span><span>篩選</span></div>
+        <div class="nav-item active" onclick="switchPage('add')" id="navAdd"><span class="nav-icon">➕</span><span>紀錄</span></div>
+        <div class="nav-item" onclick="switchPage('list')" id="navHistory"><span class="nav-icon">📁</span><span>類別</span></div>
+        <div class="nav-item" onclick="switchPage('filter')" id="navFilter"><span class="nav-icon">🔍</span><span>總覽</span></div>
     </div>
 
 <script>
-    const dimensions = ["個人", "家庭", "職場"];
-    const categories = ["成長", "健康", "財務", "專案", "技能", "社交", "娛樂"];
-    
-    let db = JSON.parse(localStorage.getItem('my_life_db')) || [];
+    const categories = ["家庭", "個人", "職場", "學習", "花費", "股票", "親子", "保險"];
+    let db = JSON.parse(localStorage.getItem('life_vault_v2')) || [];
     let selectedCats = [];
     let filterStatus = 'all';
-    let filterSelectedCats = [];
-
-    function initUI() {
-        const fCatPicker = document.getElementById('filterCatPicker');
-        categories.forEach(cat => {
-            const btn = document.createElement('div');
-            btn.className = `picker-item tag-${cat}`;
-            btn.innerText = cat;
-            btn.onclick = () => {
-                btn.classList.toggle('selected');
-                if(filterSelectedCats.includes(cat)) filterSelectedCats = filterSelectedCats.filter(c => c!==cat);
-                else filterSelectedCats.push(cat);
-                renderFilterResult();
-            };
-            fCatPicker.appendChild(btn);
-        });
-        renderDimensionMenu();
-    }
 
     function saveItem() {
         const name = document.getElementById('p_name').value;
-        const dimension = document.getElementById('p_dimension').value;
         const rate = parseInt(document.getElementById('p_rate').value);
         const done = document.getElementById('p_done').checked;
         const editId = document.getElementById('editId').value;
 
-        if(!name || selectedCats.length === 0) return alert('請填寫名稱並至少選擇一個類別');
+        if(!name || selectedCats.length === 0) return alert('請填寫內容並選擇標籤');
 
-        const itemData = {
-            id: editId ? parseInt(editId) : Date.now(),
-            name, dimension, rate, done,
-            cats: [...selectedCats],
-            time: new Date().toLocaleDateString()
-        };
+        const data = { id: editId ? parseInt(editId) : Date.now(), name, rate, done, cats: [...selectedCats], date: new Date().toLocaleDateString() };
 
         if(editId) {
             const idx = db.findIndex(i => i.id == editId);
-            db[idx] = itemData;
+            db[idx] = data;
         } else {
-            db.unshift(itemData);
+            db.unshift(data);
         }
-
-        localStorage.setItem('my_life_db', JSON.stringify(db));
+        
+        localStorage.setItem('life_vault_v2', JSON.stringify(db));
         resetForm();
-        switchPage('list');
+        switchPage('filter');
     }
 
-    function renderDimensionMenu() {
-        const menu = document.getElementById('dimensionMenu');
-        menu.innerHTML = '';
-        dimensions.forEach(d => {
-            const count = db.filter(i => i.dimension === d).length;
-            const icon = d === "個人" ? "🧘" : (d === "家庭" ? "🏠" : "💼");
-            menu.innerHTML += `
-                <div class="dimension-box" onclick="openSubPage('${d}')">
-                    ${icon} ${d}
-                    <span class="count">${count} 項目</span>
-                </div>`;
+    function renderCatMenu() {
+        const menu = document.getElementById('catMenu'); menu.innerHTML = '';
+        categories.forEach(cat => {
+            const count = db.filter(i => i.cats.includes(cat)).length;
+            const box = document.createElement('div');
+            box.className = `category-box tag-${cat}`;
+            box.innerHTML = `${cat}${count > 0 ? `<span class="count">${count}</span>` : ''}`;
+            box.onclick = () => openSubPage(cat);
+            menu.appendChild(box);
         });
     }
 
-    function openSubPage(dim) {
-        document.getElementById('subPageTitle').innerText = dim + " 紀錄清單";
-        const container = document.getElementById('subListContainer');
-        container.innerHTML = '';
-        db.filter(i => i.dimension === dim).forEach(item => {
-            container.appendChild(createCard(item));
-        });
+    function openSubPage(cat) {
+        document.getElementById('subPageTitle').innerText = '標籤：' + cat;
+        const container = document.getElementById('subListContainer'); container.innerHTML = '';
+        db.filter(i => i.cats.includes(cat)).forEach(item => container.appendChild(createCard(item)));
         document.getElementById('subPageList').style.display = 'block';
     }
 
     function createCard(item) {
-        const card = document.createElement('div');
-        card.className = 'item-card';
-        let catsHtml = item.cats.map(c => `<span class="mini-tag tag-${c}">${c}</span>`).join('');
-        
+        const card = document.createElement('div'); card.className = 'item-card';
+        const catsHtml = item.cats.map(c => `<span class="mini-tag tag-${c}">${c}</span>`).join('');
         card.innerHTML = `
-            <div class="item-title">${item.done ? '🏆 ' : '⏳ '}${item.name}</div>
+            <div class="item-title">${item.done ? '✅ ' : '⏳ '}${item.name}</div>
             <div class="display-cats">${catsHtml}</div>
             <div style="color:#f1c40f;">${'⭐'.repeat(item.rate)}</div>
-            <div style="font-size:11px; color:#999; margin-top:5px;">${item.dimension} • ${item.time}</div>
+            <div style="color:#999; font-size:11px; margin-top:5px;">建立日期：${item.date}</div>
             <div class="btn-group">
                 <button class="sub-btn" style="background:#f0f3f4;" onclick="editItem(${item.id})">編輯</button>
                 <button class="sub-btn" style="background:#fadbd8; color:#e74c3c;" onclick="deleteItem(${item.id})">刪除</button>
-            </div>
-        `;
+            </div>`;
         return card;
     }
 
-    function toggleFilterStatus(el, status) {
-        filterStatus = status;
+    function switchPage(p) {
+        document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById({ 'add':'pageAdd', 'list':'pageList', 'filter':'pageFilter' }[p]).classList.add('active');
+        document.getElementById({ 'add':'navAdd', 'list':'navHistory', 'filter':'navFilter' }[p]).classList.add('active');
+        if(p === 'list') renderCatMenu();
+        if(p === 'filter') renderFilterResult();
+        closeSubPage();
+    }
+
+    function toggleTag(el, val) {
+        if(selectedCats.includes(val)) selectedCats = selectedCats.filter(i => i !== val);
+        else selectedCats.push(val);
+        el.classList.toggle('selected');
+    }
+
+    function setRate(num) {
+        const curr = parseInt(document.getElementById('p_rate').value);
+        const finalNum = (curr === num) ? 0 : num;
+        document.getElementById('p_rate').value = finalNum;
+        document.querySelectorAll('#ratePicker .picker-item').forEach((it, idx) => it.classList.toggle('selected', finalNum > 0 && idx === finalNum - 1));
+    }
+
+    function toggleFilterStatus(el, s) {
+        filterStatus = s;
         document.querySelectorAll('#filterStatusPicker .picker-item').forEach(it => it.classList.remove('selected'));
         el.classList.add('selected');
         renderFilterResult();
@@ -254,8 +234,6 @@
         let res = db;
         if(filterStatus === 'todo') res = res.filter(i => !i.done);
         if(filterStatus === 'done') res = res.filter(i => i.done);
-        if(filterSelectedCats.length) res = res.filter(i => i.cats.some(c => filterSelectedCats.includes(c)));
-
         container.innerHTML = res.length ? '' : '<p style="text-align:center; color:#ccc; margin-top:30px;">尚無紀錄</p>';
         res.forEach(item => container.appendChild(createCard(item)));
     }
@@ -263,17 +241,13 @@
     function editItem(id) {
         const item = db.find(i => i.id === id);
         if(!item) return;
-        closeSubPage();
         document.getElementById('editId').value = item.id;
         document.getElementById('p_name').value = item.name;
-        document.getElementById('p_dimension').value = item.dimension;
         document.getElementById('p_done').checked = item.done;
         setRate(item.rate);
         selectedCats = [...item.cats];
-        document.querySelectorAll('#catPicker .picker-item').forEach(el => {
-            el.classList.toggle('selected', selectedCats.includes(el.innerText));
-        });
-        document.getElementById('saveBtn').innerText = "更新紀錄";
+        document.querySelectorAll('#catPicker .picker-item').forEach(el => el.classList.toggle('selected', selectedCats.includes(el.innerText)));
+        document.getElementById('saveBtn').innerText = "更新資料";
         document.getElementById('cancelBtn').style.display = "block";
         switchPage('add');
     }
@@ -281,53 +255,19 @@
     function deleteItem(id) {
         if(!confirm('確定刪除？')) return;
         db = db.filter(i => i.id !== id);
-        localStorage.setItem('my_life_db', JSON.stringify(db));
-        renderDimensionMenu();
-        renderFilterResult();
-        closeSubPage();
-    }
-
-    function switchPage(p) {
-        document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        
-        const pageId = { 'add':'pageAdd', 'list':'pageList', 'filter':'pageFilter' }[p];
-        const navId = { 'add':'navAdd', 'list':'navDimension', 'filter':'navFilter' }[p];
-        
-        document.getElementById(pageId).classList.add('active');
-        document.getElementById(navId).classList.add('active');
-        
-        if(p === 'list') renderDimensionMenu();
-        if(p === 'filter') renderFilterResult();
-    }
-
-    function toggleTag(el, val) {
-        if(selectedCats.includes(val)) selectedCats = selectedCats.filter(i => i !== val);
-        else selectedCats.push(val);
-        el.classList.toggle('selected');
-    }
-
-    function setRate(num) {
-        document.getElementById('p_rate').value = num;
-        document.querySelectorAll('#ratePicker .picker-item').forEach((it, idx) => {
-            it.classList.toggle('selected', idx + 1 === num);
-        });
+        localStorage.setItem('life_vault_v2', JSON.stringify(db));
+        renderCatMenu(); renderFilterResult(); closeSubPage();
     }
 
     function resetForm() {
-        document.getElementById('editId').value = "";
-        document.getElementById('p_name').value = "";
-        document.getElementById('p_done').checked = false;
-        setRate(0);
-        selectedCats = [];
+        document.getElementById('editId').value = ""; document.getElementById('p_name').value = "";
+        document.getElementById('p_done').checked = false; setRate(0); selectedCats = [];
         document.querySelectorAll('#catPicker .picker-item').forEach(el => el.classList.remove('selected'));
-        document.getElementById('saveBtn').innerText = "儲存紀錄";
-        document.getElementById('cancelBtn').style.display = "none";
+        document.getElementById('saveBtn').innerText = "儲存資料"; document.getElementById('cancelBtn').style.display = "none";
     }
 
     function closeSubPage() { document.getElementById('subPageList').style.display = 'none'; }
-
-    initUI();
+    renderCatMenu();
 </script>
 </body>
 </html>
