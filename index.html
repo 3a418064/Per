@@ -3,19 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>全方位私藏名單</title>
+    <title>全方位私藏名單 - 日期優化版</title>
     <style>
         :root {
             --primary: #5d6d7e; --accent: #aed6f1; --bg: #fdfefe; --white: #ffffff;
-            /* 重新定義 8 大類別配色 - 馬卡龍色系 */
-            --color-家庭: #D6EAF8; /* 藍 */
-            --color-個人: #D5F5E3; /* 綠 */
-            --color-職場: #FDEBD0; /* 橘 */
-            --color-學習: #EBDEF0; /* 紫 */
-            --color-花費: #FADBD8; /* 紅 */
-            --color-股票: #FCF3CF; /* 黃 */
-            --color-親子: #D1F2EB; /* 薄荷 */
-            --color-保險: #E5E7E9; /* 灰 */
+            --color-家庭: #D6EAF8; --color-個人: #D5F5E3; --color-職場: #FDEBD0;
+            --color-學習: #EBDEF0; --color-花費: #FADBD8; --color-股票: #FCF3CF;
+            --color-親子: #D1F2EB; --color-保險: #E5E7E9;
         }
         body { font-family: -apple-system, "Noto Sans TC", sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 85px; }
         .app-header { background: var(--white); padding: 15px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
@@ -26,7 +20,7 @@
         .card { background: var(--white); padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 12px; border: 1px solid #f0f0f0; }
         .form-group { margin-bottom: 18px; display: flex; flex-direction: column; }
         label { font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #7f8c8d; }
-        input, select { padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
+        input { padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
         
         .picker-container { display: flex; flex-wrap: wrap; gap: 8px; }
         .picker-item { 
@@ -36,32 +30,25 @@
         }
         .picker-item.selected { border-color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: white !important; }
 
-        /* 動態類別背景 */
-        .tag-家庭 { background-color: var(--color-家庭); }
-        .tag-個人 { background-color: var(--color-個人); }
-        .tag-職場 { background-color: var(--color-職場); }
-        .tag-學習 { background-color: var(--color-學習); }
-        .tag-花費 { background-color: var(--color-花費); }
-        .tag-股票 { background-color: var(--color-股票); }
-        .tag-親子 { background-color: var(--color-親子); }
-        .tag-保險 { background-color: var(--color-保險); }
+        .tag-家庭 { background-color: var(--color-家庭); } .tag-個人 { background-color: var(--color-個人); }
+        .tag-職場 { background-color: var(--color-職場); } .tag-學習 { background-color: var(--color-學習); }
+        .tag-花費 { background-color: var(--color-花費); } .tag-股票 { background-color: var(--color-股票); }
+        .tag-親子 { background-color: var(--color-親子); } .tag-保險 { background-color: var(--color-保險); }
 
         .main-btn { width: 100%; padding: 14px; background: var(--accent); color: #444; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
 
-        /* 網格清單 */
         .grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .category-box { background: var(--white); padding: 20px 10px; border-radius: 12px; text-align: center; border: 1px solid #f0f0f0; position: relative; font-size: 15px; font-weight: bold; }
         .category-box .count { position: absolute; top: -5px; right: -5px; background: #ff7675; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; }
 
-        /* 卡片樣式 */
         .item-card { padding: 18px; border-radius: 16px; margin-bottom: 15px; background: white; border: 1px solid #f0f0f0; position: relative; }
         .item-title { font-size: 17px; font-weight: bold; color: var(--primary); }
+        .date-badge { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 6px; font-size: 12px; color: #666; font-weight: bold; margin-bottom: 8px; }
         .display-cats { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
         .mini-tag { padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
         .sub-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; }
 
-        /* 導覽 */
         .navbar { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--white); display: flex; border-top: 1px solid #f0f0f0; z-index: 3000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #bdc3c7; cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
@@ -78,6 +65,12 @@
         <div class="card">
             <input type="hidden" id="editId" value="">
             <div class="form-group"><label>項目名稱</label><input type="text" id="p_name" placeholder="內容描述..."></div>
+            
+            <div class="form-group">
+                <label>紀錄日期 (格式: 26-04-19-週日)</label>
+                <input type="text" id="p_custom_date" placeholder="自動生成中...">
+            </div>
+
             <div class="form-group">
                 <label>選擇標籤 (可複選)</label>
                 <div class="picker-container" id="catPicker">
@@ -91,15 +84,7 @@
                     <div class="picker-item tag-保險" onclick="toggleTag(this, '保險')">保險</div>
                 </div>
             </div>
-            <div class="form-group">
-                <label>重要程度</label>
-                <div class="picker-container" id="ratePicker">
-                    <div class="picker-item" onclick="setRate(1)">⭐</div>
-                    <div class="picker-item" onclick="setRate(2)">⭐⭐</div>
-                    <div class="picker-item" onclick="setRate(3)">⭐⭐⭐</div>
-                </div>
-                <input type="hidden" id="p_rate" value="0">
-            </div>
+
             <div style="margin: 10px 0 25px; display: flex; align-items: center; gap: 10px;">
                 <input type="checkbox" id="p_done" style="width:24px; height:24px;">
                 <label for="p_done" style="margin:0; font-size:16px; color:#555;">完成 / 結案 🚩</label>
@@ -139,19 +124,40 @@
 
 <script>
     const categories = ["家庭", "個人", "職場", "學習", "花費", "股票", "親子", "保險"];
-    let db = JSON.parse(localStorage.getItem('life_vault_v2')) || [];
+    let db = JSON.parse(localStorage.getItem('life_vault_v3')) || [];
     let selectedCats = [];
     let filterStatus = 'all';
 
+    // 生成自定義日期格式：26-04-19-週日
+    function getFormattedDate() {
+        const now = new Date();
+        const yy = String(now.getFullYear()).slice(-2);
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+        const dayName = weekdays[now.getDay()];
+        return `${yy}-${mm}-${dd}-${dayName}`;
+    }
+
+    function initForm() {
+        document.getElementById('p_custom_date').value = getFormattedDate();
+    }
+
     function saveItem() {
         const name = document.getElementById('p_name').value;
-        const rate = parseInt(document.getElementById('p_rate').value);
+        const customDate = document.getElementById('p_custom_date').value;
         const done = document.getElementById('p_done').checked;
         const editId = document.getElementById('editId').value;
 
         if(!name || selectedCats.length === 0) return alert('請填寫內容並選擇標籤');
 
-        const data = { id: editId ? parseInt(editId) : Date.now(), name, rate, done, cats: [...selectedCats], date: new Date().toLocaleDateString() };
+        const data = { 
+            id: editId ? parseInt(editId) : Date.now(), 
+            name, 
+            customDate, 
+            done, 
+            cats: [...selectedCats] 
+        };
 
         if(editId) {
             const idx = db.findIndex(i => i.id == editId);
@@ -160,7 +166,10 @@
             db.unshift(data);
         }
         
-        localStorage.setItem('life_vault_v2', JSON.stringify(db));
+        // 依照日期排序（由新到舊）
+        db.sort((a, b) => b.customDate.localeCompare(a.customDate));
+        
+        localStorage.setItem('life_vault_v3', JSON.stringify(db));
         resetForm();
         switchPage('filter');
     }
@@ -188,10 +197,9 @@
         const card = document.createElement('div'); card.className = 'item-card';
         const catsHtml = item.cats.map(c => `<span class="mini-tag tag-${c}">${c}</span>`).join('');
         card.innerHTML = `
+            <div class="date-badge">${item.customDate}</div>
             <div class="item-title">${item.done ? '✅ ' : '⏳ '}${item.name}</div>
             <div class="display-cats">${catsHtml}</div>
-            <div style="color:#f1c40f;">${'⭐'.repeat(item.rate)}</div>
-            <div style="color:#999; font-size:11px; margin-top:5px;">建立日期：${item.date}</div>
             <div class="btn-group">
                 <button class="sub-btn" style="background:#f0f3f4;" onclick="editItem(${item.id})">編輯</button>
                 <button class="sub-btn" style="background:#fadbd8; color:#e74c3c;" onclick="deleteItem(${item.id})">刪除</button>
@@ -215,13 +223,6 @@
         el.classList.toggle('selected');
     }
 
-    function setRate(num) {
-        const curr = parseInt(document.getElementById('p_rate').value);
-        const finalNum = (curr === num) ? 0 : num;
-        document.getElementById('p_rate').value = finalNum;
-        document.querySelectorAll('#ratePicker .picker-item').forEach((it, idx) => it.classList.toggle('selected', finalNum > 0 && idx === finalNum - 1));
-    }
-
     function toggleFilterStatus(el, s) {
         filterStatus = s;
         document.querySelectorAll('#filterStatusPicker .picker-item').forEach(it => it.classList.remove('selected'));
@@ -243,8 +244,8 @@
         if(!item) return;
         document.getElementById('editId').value = item.id;
         document.getElementById('p_name').value = item.name;
+        document.getElementById('p_custom_date').value = item.customDate;
         document.getElementById('p_done').checked = item.done;
-        setRate(item.rate);
         selectedCats = [...item.cats];
         document.querySelectorAll('#catPicker .picker-item').forEach(el => el.classList.toggle('selected', selectedCats.includes(el.innerText)));
         document.getElementById('saveBtn').innerText = "更新資料";
@@ -255,19 +256,27 @@
     function deleteItem(id) {
         if(!confirm('確定刪除？')) return;
         db = db.filter(i => i.id !== id);
-        localStorage.setItem('life_vault_v2', JSON.stringify(db));
+        localStorage.setItem('life_vault_v3', JSON.stringify(db));
         renderCatMenu(); renderFilterResult(); closeSubPage();
     }
 
     function resetForm() {
-        document.getElementById('editId').value = ""; document.getElementById('p_name').value = "";
-        document.getElementById('p_done').checked = false; setRate(0); selectedCats = [];
+        document.getElementById('editId').value = ""; 
+        document.getElementById('p_name').value = "";
+        document.getElementById('p_done').checked = false; 
+        initForm(); // 重置為當前日期
+        selectedCats = [];
         document.querySelectorAll('#catPicker .picker-item').forEach(el => el.classList.remove('selected'));
-        document.getElementById('saveBtn').innerText = "儲存資料"; document.getElementById('cancelBtn').style.display = "none";
+        document.getElementById('saveBtn').innerText = "儲存資料"; 
+        document.getElementById('cancelBtn').style.display = "none";
     }
 
     function closeSubPage() { document.getElementById('subPageList').style.display = 'none'; }
+    
+    // 初始化執行
+    initForm();
     renderCatMenu();
 </script>
 </body>
 </html>
+
