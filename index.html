@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>全方位私藏名單 - 下拉日期版</title>
+    <title>全方位私藏名單 - 儀表板版</title>
     <style>
         :root {
             --primary: #5d6d7e; --accent: #aed6f1; --bg: #fdfefe; --white: #ffffff;
@@ -17,19 +17,22 @@
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
 
+        /* 卡片與表單 */
         .card { background: var(--white); padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 12px; border: 1px solid #f0f0f0; }
         .form-group { margin-bottom: 18px; display: flex; flex-direction: column; }
         label { font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #7f8c8d; }
-        input[type="text"], input[type="date"] { padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; font-family: inherit; }
+        input { padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
         
-        .picker-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        /* 網格系統：3個一列 */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .picker-item { 
-            padding: 10px 12px; border-radius: 12px; font-size: 13px; cursor: pointer; 
+            padding: 10px 5px; border-radius: 10px; font-size: 12px; cursor: pointer; 
             border: 2px solid transparent; transition: 0.2s; color: #555; font-weight: 500; text-align: center;
-            background: #f5f5f5; flex-grow: 1; min-width: 75px;
+            background: #f5f5f5; 
         }
-        .picker-item.selected { border-color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: white !important; }
+        .picker-item.selected { border-color: var(--primary); background: white !important; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
+        /* 標籤顏色 */
         .tag-家庭 { background-color: var(--color-家庭); } .tag-個人 { background-color: var(--color-個人); }
         .tag-職場 { background-color: var(--color-職場); } .tag-學習 { background-color: var(--color-學習); }
         .tag-花費 { background-color: var(--color-花費); } .tag-股票 { background-color: var(--color-股票); }
@@ -37,43 +40,34 @@
 
         .main-btn { width: 100%; padding: 14px; background: var(--accent); color: #444; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
 
-        .grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .category-box { background: var(--white); padding: 20px 10px; border-radius: 12px; text-align: center; border: 1px solid #f0f0f0; position: relative; font-size: 15px; font-weight: bold; }
-        .category-box .count { position: absolute; top: -5px; right: -5px; background: #ff7675; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; }
-
-        .item-card { padding: 18px; border-radius: 16px; margin-bottom: 15px; background: white; border: 1px solid #f0f0f0; position: relative; }
-        .item-title { font-size: 17px; font-weight: bold; color: var(--primary); }
-        .date-badge { display: inline-block; background: #f0f3f4; padding: 2px 10px; border-radius: 6px; font-size: 12px; color: #5d6d7e; font-weight: bold; margin-bottom: 8px; border: 1px solid #e5e8e8; }
+        /* 紀錄卡片 */
+        .item-card { padding: 18px; border-radius: 16px; margin-bottom: 12px; background: white; border: 1px solid #f0f0f0; }
+        .date-badge { display: inline-block; background: #f0f3f4; padding: 2px 10px; border-radius: 6px; font-size: 11px; color: #5d6d7e; font-weight: bold; margin-bottom: 8px; }
+        .item-title { font-size: 16px; font-weight: bold; color: var(--primary); }
         .display-cats { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
-        .mini-tag { padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        .sub-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; }
+        .mini-tag { padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; }
+        .btn-group { display: flex; gap: 8px; margin-top: 12px; }
+        .sub-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 11px; font-weight: bold; }
 
-        .navbar { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--white); display: flex; border-top: 1px solid #f0f0f0; z-index: 3000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #bdc3c7; cursor: pointer; }
+        /* 底部導覽 (改為兩格) */
+        .navbar { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--white); display: flex; border-top: 1px solid #f0f0f0; z-index: 3000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: #bdc3c7; cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
-
-        #subPageList { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 4000; display: none; overflow-y: auto; padding: 15px; box-sizing: border-box; }
+        .nav-icon { font-size: 22px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="app-header"><h2 id="headerTitle">新增資料</h2></div>
+    <div class="app-header"><h2 id="headerTitle">新增紀錄</h2></div>
 
     <div id="pageAdd" class="page active">
         <div class="card">
             <input type="hidden" id="editId" value="">
-            <div class="form-group"><label>項目名稱</label><input type="text" id="p_name" placeholder="內容描述..."></div>
-            
+            <div class="form-group"><label>項目名稱</label><input type="text" id="p_name" placeholder="輸入內容..."></div>
+            <div class="form-group"><label>日期</label><input type="date" id="p_date_input"></div>
             <div class="form-group">
-                <label>選擇日期</label>
-                <input type="date" id="p_date_input">
-            </div>
-
-            <div class="form-group">
-                <label>選擇標籤 (可複選)</label>
-                <div class="picker-container" id="catPicker">
+                <label>標籤 (可複選)</label>
+                <div class="grid-3" id="catPicker">
                     <div class="picker-item tag-家庭" onclick="toggleTag(this, '家庭')">家庭</div>
                     <div class="picker-item tag-個人" onclick="toggleTag(this, '個人')">個人</div>
                     <div class="picker-item tag-職場" onclick="toggleTag(this, '職場')">職場</div>
@@ -84,53 +78,63 @@
                     <div class="picker-item tag-保險" onclick="toggleTag(this, '保險')">保險</div>
                 </div>
             </div>
-
-            <div style="margin: 10px 0 25px; display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="p_done" style="width:24px; height:24px;">
-                <label for="p_done" style="margin:0; font-size:16px; color:#555;">完成 / 結案 🚩</label>
+            <div style="margin: 10px 0 20px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="p_done" style="width:22px; height:22px;">
+                <label for="p_done" style="margin:0; font-size:15px;">已完成 🚩</label>
             </div>
             <button class="main-btn" id="saveBtn" onclick="saveItem()">儲存資料</button>
-            <button class="main-btn" id="cancelBtn" onclick="resetForm()" style="background:#bdc3c7; margin-top:10px; display:none;">取消編輯</button>
+            <button class="main-btn" id="cancelBtn" onclick="resetForm()" style="background:#ddd; margin-top:10px; display:none;">取消編輯</button>
         </div>
-    </div>
-
-    <div id="pageList" class="page">
-        <div class="grid-layout" id="catMenu"></div>
     </div>
 
     <div id="pageFilter" class="page">
-        <div class="card" style="padding: 12px; margin-bottom: 10px;">
-            <label>狀態篩選</label>
-            <div class="picker-container" id="filterStatusPicker">
-                <div class="picker-item selected" onclick="toggleFilterStatus(this, 'all')">全部</div>
-                <div class="picker-item" onclick="toggleFilterStatus(this, 'todo')">未完成</div>
-                <div class="picker-item" onclick="toggleFilterStatus(this, 'done')">已完成</div>
+        <div class="card" style="padding: 12px;">
+            <label>狀態</label>
+            <div class="grid-3" id="fStatus">
+                <div class="picker-item selected" onclick="filterSetStatus(this, 'all')">全部</div>
+                <div class="picker-item" onclick="filterSetStatus(this, 'todo')">進行中</div>
+                <div class="picker-item" onclick="filterSetStatus(this, 'done')">已完成</div>
             </div>
         </div>
+
+        <div class="card" style="padding: 12px;">
+            <label>時間範圍</label>
+            <div class="grid-3" id="fWeek">
+                <div class="picker-item selected" onclick="filterSetWeek(this, 'all')">不限</div>
+                <div class="picker-item" onclick="filterSetWeek(this, 'current')">本週</div>
+                <div class="picker-item" onclick="filterSetWeek(this, 'last')">上週</div>
+            </div>
+        </div>
+
+        <div class="card" style="padding: 12px;">
+            <label>類別 (複選)</label>
+            <div class="grid-3" id="fCats">
+                <div class="picker-item tag-家庭" onclick="filterToggleCat(this, '家庭')">家庭</div>
+                <div class="picker-item tag-個人" onclick="filterToggleCat(this, '個人')">個人</div>
+                <div class="picker-item tag-職場" onclick="filterToggleCat(this, '職場')">職場</div>
+                <div class="picker-item tag-學習" onclick="filterToggleCat(this, '學習')">學習</div>
+                <div class="picker-item tag-花費" onclick="filterToggleCat(this, '花費')">花費</div>
+                <div class="picker-item tag-股票" onclick="filterToggleCat(this, '股票')">股票</div>
+                <div class="picker-item tag-親子" onclick="filterToggleCat(this, '親子')">親子</div>
+                <div class="picker-item tag-保險" onclick="filterToggleCat(this, '保險')">保險</div>
+            </div>
+        </div>
+
         <div id="filterResultContainer"></div>
     </div>
 
-    <div id="subPageList">
-        <button onclick="closeSubPage()" style="background:#555; color:white; border:none; padding:8px 15px; border-radius:20px; margin-bottom:15px;">← 返回</button>
-        <h3 id="subPageTitle"></h3>
-        <div id="subListContainer"></div>
-    </div>
-
     <div class="navbar">
-        <div class="nav-item active" onclick="switchPage('add')" id="navAdd"><span class="nav-icon">➕</span><span>紀錄</span></div>
-        <div class="nav-item" onclick="switchPage('list')" id="navHistory"><span class="nav-icon">📁</span><span>類別</span></div>
-        <div class="nav-item" onclick="switchPage('filter')" id="navFilter"><span class="nav-icon">🔍</span><span>總覽</span></div>
+        <div class="nav-item active" onclick="switchPage('add')" id="navAdd"><span class="nav-icon">📝</span><span>紀錄</span></div>
+        <div class="nav-item" onclick="switchPage('filter')" id="navFilter"><span class="nav-icon">📊</span><span>總覽</span></div>
     </div>
 
 <script>
-    const categories = ["家庭", "個人", "職場", "學習", "花費", "股票", "親子", "保險"];
-    let db = JSON.parse(localStorage.getItem('life_vault_v4')) || [];
-    let selectedCats = [];
-    let filterStatus = 'all';
+    let db = JSON.parse(localStorage.getItem('life_vault_v5')) || [];
+    let selectedCats = []; // 用於新增
+    let fStatus = 'all', fWeek = 'all', fCats = []; // 用於篩選
 
-    // 將 YYYY-MM-DD 轉為 26-04-19-週日
+    // 日期處理
     function formatToCustom(dateStr) {
-        if (!dateStr) return "";
         const d = new Date(dateStr);
         const yy = String(d.getFullYear()).slice(-2);
         const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -139,18 +143,29 @@
         return `${yy}-${mm}-${dd}-${weekdays[d.getDay()]}`;
     }
 
-    // 將 26-04-19-週日 轉回 YYYY-MM-DD (用於編輯時載入)
-    function formatToInput(customStr) {
-        if (!customStr) return "";
-        const parts = customStr.split('-');
-        const fullYear = "20" + parts[0];
-        return `${fullYear}-${parts[1]}-${parts[2]}`;
+    function getWeekInfo(date) {
+        const d = new Date(date);
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const dayOfWeek = startOfToday.getDay(); // 0 是週日
+        const startOfWeek = new Date(startOfToday);
+        startOfWeek.setDate(startOfToday.getDate() - dayOfWeek);
+        
+        const lastWeekStart = new Date(startOfWeek);
+        lastWeekStart.setDate(startOfWeek.getDate() - 7);
+        const lastWeekEnd = new Date(startOfWeek);
+        lastWeekEnd.setSeconds(-1);
+
+        if (d >= startOfWeek) return 'current';
+        if (d >= lastWeekStart && d <= lastWeekEnd) return 'last';
+        return 'other';
     }
 
-    function initForm() {
-        const now = new Date();
-        const today = now.toISOString().split('T')[0];
-        document.getElementById('p_date_input').value = today;
+    // 新增邏輯
+    function toggleTag(el, val) {
+        if(selectedCats.includes(val)) selectedCats = selectedCats.filter(i => i !== val);
+        else selectedCats.push(val);
+        el.classList.toggle('selected');
     }
 
     function saveItem() {
@@ -159,13 +174,13 @@
         const done = document.getElementById('p_done').checked;
         const editId = document.getElementById('editId').value;
 
-        if(!name || !dateInput || selectedCats.length === 0) return alert('請完整填寫名稱、日期並選擇標籤');
+        if(!name || !dateInput || selectedCats.length === 0) return alert('請填寫完整');
 
-        const customDate = formatToCustom(dateInput);
         const data = { 
             id: editId ? parseInt(editId) : Date.now(), 
             name, 
-            customDate, // 儲存格式化的字串
+            isoDate: dateInput,
+            customDate: formatToCustom(dateInput), 
             done, 
             cats: [...selectedCats] 
         };
@@ -177,77 +192,74 @@
             db.unshift(data);
         }
         
-        // 排序：先比日期字串
-        db.sort((a, b) => b.customDate.localeCompare(a.customDate));
-        
-        localStorage.setItem('life_vault_v4', JSON.stringify(db));
+        db.sort((a, b) => b.isoDate.localeCompare(a.isoDate));
+        localStorage.setItem('life_vault_v5', JSON.stringify(db));
         resetForm();
         switchPage('filter');
     }
 
-    function renderCatMenu() {
-        const menu = document.getElementById('catMenu'); menu.innerHTML = '';
-        categories.forEach(cat => {
-            const count = db.filter(i => i.cats.includes(cat)).length;
-            const box = document.createElement('div');
-            box.className = `category-box tag-${cat}`;
-            box.innerHTML = `${cat}${count > 0 ? `<span class="count">${count}</span>` : ''}`;
-            box.onclick = () => openSubPage(cat);
-            menu.appendChild(box);
-        });
-    }
-
-    function openSubPage(cat) {
-        document.getElementById('subPageTitle').innerText = '標籤：' + cat;
-        const container = document.getElementById('subListContainer'); container.innerHTML = '';
-        db.filter(i => i.cats.includes(cat)).forEach(item => container.appendChild(createCard(item)));
-        document.getElementById('subPageList').style.display = 'block';
-    }
-
-    function createCard(item) {
-        const card = document.createElement('div'); card.className = 'item-card';
-        const catsHtml = item.cats.map(c => `<span class="mini-tag tag-${c}">${c}</span>`).join('');
-        card.innerHTML = `
-            <div class="date-badge">${item.customDate}</div>
-            <div class="item-title">${item.done ? '✅ ' : '⏳ '}${item.name}</div>
-            <div class="display-cats">${catsHtml}</div>
-            <div class="btn-group">
-                <button class="sub-btn" style="background:#f0f3f4;" onclick="editItem(${item.id})">編輯</button>
-                <button class="sub-btn" style="background:#fadbd8; color:#e74c3c;" onclick="deleteItem(${item.id})">刪除</button>
-            </div>`;
-        return card;
-    }
-
-    function switchPage(p) {
-        document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById({ 'add':'pageAdd', 'list':'pageList', 'filter':'pageFilter' }[p]).classList.add('active');
-        document.getElementById({ 'add':'navAdd', 'list':'navHistory', 'filter':'navFilter' }[p]).classList.add('active');
-        if(p === 'list') renderCatMenu();
-        if(p === 'filter') renderFilterResult();
-        closeSubPage();
-    }
-
-    function toggleTag(el, val) {
-        if(selectedCats.includes(val)) selectedCats = selectedCats.filter(i => i !== val);
-        else selectedCats.push(val);
-        el.classList.toggle('selected');
-    }
-
-    function toggleFilterStatus(el, s) {
-        filterStatus = s;
-        document.querySelectorAll('#filterStatusPicker .picker-item').forEach(it => it.classList.remove('selected'));
+    // 篩選邏輯
+    function filterSetStatus(el, val) {
+        fStatus = val;
+        document.querySelectorAll('#fStatus .picker-item').forEach(i => i.classList.remove('selected'));
         el.classList.add('selected');
+        renderFilterResult();
+    }
+
+    function filterSetWeek(el, val) {
+        fWeek = val;
+        document.querySelectorAll('#fWeek .picker-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        renderFilterResult();
+    }
+
+    function filterToggleCat(el, val) {
+        if(fCats.includes(val)) fCats = fCats.filter(i => i !== val);
+        else fCats.push(val);
+        el.classList.toggle('selected');
         renderFilterResult();
     }
 
     function renderFilterResult() {
         const container = document.getElementById('filterResultContainer');
         let res = db;
-        if(filterStatus === 'todo') res = res.filter(i => !i.done);
-        if(filterStatus === 'done') res = res.filter(i => i.done);
-        container.innerHTML = res.length ? '' : '<p style="text-align:center; color:#ccc; margin-top:30px;">尚無紀錄</p>';
-        res.forEach(item => container.appendChild(createCard(item)));
+
+        if(fStatus === 'todo') res = res.filter(i => !i.done);
+        if(fStatus === 'done') res = res.filter(i => i.done);
+
+        if(fWeek !== 'all') {
+            res = res.filter(i => getWeekInfo(i.isoDate) === fWeek);
+        }
+
+        if(fCats.length > 0) {
+            res = res.filter(i => i.cats.some(c => fCats.includes(c)));
+        }
+
+        container.innerHTML = res.length ? '' : '<p style="text-align:center; color:#ccc; margin-top:30px;">查無資料</p>';
+        res.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            const tags = item.cats.map(c => `<span class="mini-tag tag-${c}">${c}</span>`).join('');
+            card.innerHTML = `
+                <div class="date-badge">${item.customDate}</div>
+                <div class="item-title">${item.done ? '✅ ' : '⏳ '}${item.name}</div>
+                <div class="display-cats">${tags}</div>
+                <div class="btn-group">
+                    <button class="sub-btn" style="background:#f5f5f5;" onclick="editItem(${item.id})">編輯</button>
+                    <button class="sub-btn" style="background:#fff0f0; color:#e74c3c;" onclick="deleteItem(${item.id})">刪除</button>
+                </div>`;
+            container.appendChild(card);
+        });
+    }
+
+    // 頁面控制
+    function switchPage(p) {
+        document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(p === 'add' ? 'pageAdd' : 'pageFilter').classList.add('active');
+        document.getElementById(p === 'add' ? 'navAdd' : 'navFilter').classList.add('active');
+        document.getElementById('headerTitle').innerText = p === 'add' ? '新增紀錄' : '📊 數據總覽';
+        if(p === 'filter') renderFilterResult();
     }
 
     function editItem(id) {
@@ -255,7 +267,7 @@
         if(!item) return;
         document.getElementById('editId').value = item.id;
         document.getElementById('p_name').value = item.name;
-        document.getElementById('p_date_input').value = formatToInput(item.customDate);
+        document.getElementById('p_date_input').value = item.isoDate;
         document.getElementById('p_done').checked = item.done;
         selectedCats = [...item.cats];
         document.querySelectorAll('#catPicker .picker-item').forEach(el => el.classList.toggle('selected', selectedCats.includes(el.innerText)));
@@ -265,27 +277,24 @@
     }
 
     function deleteItem(id) {
-        if(!confirm('確定刪除？')) return;
+        if(!confirm('刪除不可恢復，確定嗎？')) return;
         db = db.filter(i => i.id !== id);
-        localStorage.setItem('life_vault_v4', JSON.stringify(db));
-        renderCatMenu(); renderFilterResult(); closeSubPage();
+        localStorage.setItem('life_vault_v5', JSON.stringify(db));
+        renderFilterResult();
     }
 
     function resetForm() {
-        document.getElementById('editId').value = ""; 
+        document.getElementById('editId').value = "";
         document.getElementById('p_name').value = "";
-        document.getElementById('p_done').checked = false; 
-        initForm(); 
+        document.getElementById('p_done').checked = false;
+        document.getElementById('p_date_input').value = new Date().toISOString().split('T')[0];
         selectedCats = [];
         document.querySelectorAll('#catPicker .picker-item').forEach(el => el.classList.remove('selected'));
-        document.getElementById('saveBtn').innerText = "儲存資料"; 
+        document.getElementById('saveBtn').innerText = "儲存資料";
         document.getElementById('cancelBtn').style.display = "none";
     }
 
-    function closeSubPage() { document.getElementById('subPageList').style.display = 'none'; }
-    
-    initForm();
-    renderCatMenu();
+    document.getElementById('p_date_input').value = new Date().toISOString().split('T')[0];
 </script>
 </body>
 </html>
