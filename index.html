@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>全方位私藏名單 - 儀表板版</title>
+    <title>全方位私藏名單 - 週一基準版</title>
     <style>
         :root {
             --primary: #5d6d7e; --accent: #aed6f1; --bg: #fdfefe; --white: #ffffff;
@@ -17,13 +17,11 @@
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
 
-        /* 卡片與表單 */
         .card { background: var(--white); padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 12px; border: 1px solid #f0f0f0; }
         .form-group { margin-bottom: 18px; display: flex; flex-direction: column; }
         label { font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #7f8c8d; }
         input { padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 16px; outline: none; background: #fafafa; }
         
-        /* 網格系統：3個一列 */
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .picker-item { 
             padding: 10px 5px; border-radius: 10px; font-size: 12px; cursor: pointer; 
@@ -32,7 +30,6 @@
         }
         .picker-item.selected { border-color: var(--primary); background: white !important; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 標籤顏色 */
         .tag-家庭 { background-color: var(--color-家庭); } .tag-個人 { background-color: var(--color-個人); }
         .tag-職場 { background-color: var(--color-職場); } .tag-學習 { background-color: var(--color-學習); }
         .tag-花費 { background-color: var(--color-花費); } .tag-股票 { background-color: var(--color-股票); }
@@ -40,16 +37,14 @@
 
         .main-btn { width: 100%; padding: 14px; background: var(--accent); color: #444; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
 
-        /* 紀錄卡片 */
         .item-card { padding: 18px; border-radius: 16px; margin-bottom: 12px; background: white; border: 1px solid #f0f0f0; }
         .date-badge { display: inline-block; background: #f0f3f4; padding: 2px 10px; border-radius: 6px; font-size: 11px; color: #5d6d7e; font-weight: bold; margin-bottom: 8px; }
         .item-title { font-size: 16px; font-weight: bold; color: var(--primary); }
         .display-cats { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
         .mini-tag { padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; }
         .btn-group { display: flex; gap: 8px; margin-top: 12px; }
-        .sub-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 11px; font-weight: bold; }
+        .sub-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-        /* 底部導覽 (改為兩格) */
         .navbar { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--white); display: flex; border-top: 1px solid #f0f0f0; z-index: 3000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: #bdc3c7; cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
@@ -66,7 +61,7 @@
             <div class="form-group"><label>項目名稱</label><input type="text" id="p_name" placeholder="輸入內容..."></div>
             <div class="form-group"><label>日期</label><input type="date" id="p_date_input"></div>
             <div class="form-group">
-                <label>標籤 (可複選)</label>
+                <label>標籤 (複選)</label>
                 <div class="grid-3" id="catPicker">
                     <div class="picker-item tag-家庭" onclick="toggleTag(this, '家庭')">家庭</div>
                     <div class="picker-item tag-個人" onclick="toggleTag(this, '個人')">個人</div>
@@ -80,7 +75,7 @@
             </div>
             <div style="margin: 10px 0 20px; display: flex; align-items: center; gap: 10px;">
                 <input type="checkbox" id="p_done" style="width:22px; height:22px;">
-                <label for="p_done" style="margin:0; font-size:15px;">已完成 🚩</label>
+                <label for="p_done" style="margin:0; font-size:15px; color:#555;">已完成 🚩</label>
             </div>
             <button class="main-btn" id="saveBtn" onclick="saveItem()">儲存資料</button>
             <button class="main-btn" id="cancelBtn" onclick="resetForm()" style="background:#ddd; margin-top:10px; display:none;">取消編輯</button>
@@ -98,7 +93,7 @@
         </div>
 
         <div class="card" style="padding: 12px;">
-            <label>時間範圍</label>
+            <label>時間 (週一為一週開始)</label>
             <div class="grid-3" id="fWeek">
                 <div class="picker-item selected" onclick="filterSetWeek(this, 'all')">不限</div>
                 <div class="picker-item" onclick="filterSetWeek(this, 'current')">本週</div>
@@ -129,11 +124,10 @@
     </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('life_vault_v5')) || [];
-    let selectedCats = []; // 用於新增
-    let fStatus = 'all', fWeek = 'all', fCats = []; // 用於篩選
+    let db = JSON.parse(localStorage.getItem('life_vault_v6')) || [];
+    let selectedCats = []; 
+    let fStatus = 'all', fWeek = 'all', fCats = []; 
 
-    // 日期處理
     function formatToCustom(dateStr) {
         const d = new Date(dateStr);
         const yy = String(d.getFullYear()).slice(-2);
@@ -143,25 +137,31 @@
         return `${yy}-${mm}-${dd}-${weekdays[d.getDay()]}`;
     }
 
-    function getWeekInfo(date) {
-        const d = new Date(date);
-        const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const dayOfWeek = startOfToday.getDay(); // 0 是週日
-        const startOfWeek = new Date(startOfToday);
-        startOfWeek.setDate(startOfToday.getDate() - dayOfWeek);
-        
-        const lastWeekStart = new Date(startOfWeek);
-        lastWeekStart.setDate(startOfWeek.getDate() - 7);
-        const lastWeekEnd = new Date(startOfWeek);
-        lastWeekEnd.setSeconds(-1);
+    // 核心邏輯：計算週別 (週一為基準)
+    function getWeekInfo(dateStr) {
+        const target = new Date(dateStr);
+        target.setHours(0, 0, 0, 0);
 
-        if (d >= startOfWeek) return 'current';
-        if (d >= lastWeekStart && d <= lastWeekEnd) return 'last';
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        // 找出本週一
+        // getDay() 0=週日, 1=週一...
+        // 如果今天是週日(0)，則位移需要調整為 6，否則為 day-1
+        const day = today.getDay();
+        const diffToMonday = (day === 0 ? 6 : day - 1);
+        
+        const startOfThisWeek = new Date(today);
+        startOfThisWeek.setDate(today.getDate() - diffToMonday);
+
+        const startOfLastWeek = new Date(startOfThisWeek);
+        startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+
+        if (target >= startOfThisWeek) return 'current';
+        if (target >= startOfLastWeek && target < startOfThisWeek) return 'last';
         return 'other';
     }
 
-    // 新增邏輯
     function toggleTag(el, val) {
         if(selectedCats.includes(val)) selectedCats = selectedCats.filter(i => i !== val);
         else selectedCats.push(val);
@@ -174,7 +174,7 @@
         const done = document.getElementById('p_done').checked;
         const editId = document.getElementById('editId').value;
 
-        if(!name || !dateInput || selectedCats.length === 0) return alert('請填寫完整');
+        if(!name || !dateInput || selectedCats.length === 0) return alert('請完整填寫內容與標籤');
 
         const data = { 
             id: editId ? parseInt(editId) : Date.now(), 
@@ -193,12 +193,11 @@
         }
         
         db.sort((a, b) => b.isoDate.localeCompare(a.isoDate));
-        localStorage.setItem('life_vault_v5', JSON.stringify(db));
+        localStorage.setItem('life_vault_v6', JSON.stringify(db));
         resetForm();
         switchPage('filter');
     }
 
-    // 篩選邏輯
     function filterSetStatus(el, val) {
         fStatus = val;
         document.querySelectorAll('#fStatus .picker-item').forEach(i => i.classList.remove('selected'));
@@ -235,7 +234,7 @@
             res = res.filter(i => i.cats.some(c => fCats.includes(c)));
         }
 
-        container.innerHTML = res.length ? '' : '<p style="text-align:center; color:#ccc; margin-top:30px;">查無資料</p>';
+        container.innerHTML = res.length ? '' : '<p style="text-align:center; color:#ccc; margin-top:30px;">查無符合條件的紀錄</p>';
         res.forEach(item => {
             const card = document.createElement('div');
             card.className = 'item-card';
@@ -252,7 +251,6 @@
         });
     }
 
-    // 頁面控制
     function switchPage(p) {
         document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -277,9 +275,9 @@
     }
 
     function deleteItem(id) {
-        if(!confirm('刪除不可恢復，確定嗎？')) return;
+        if(!confirm('確定刪除此紀錄嗎？')) return;
         db = db.filter(i => i.id !== id);
-        localStorage.setItem('life_vault_v5', JSON.stringify(db));
+        localStorage.setItem('life_vault_v6', JSON.stringify(db));
         renderFilterResult();
     }
 
@@ -294,6 +292,7 @@
         document.getElementById('cancelBtn').style.display = "none";
     }
 
+    // 初始化日期
     document.getElementById('p_date_input').value = new Date().toISOString().split('T')[0];
 </script>
 </body>
